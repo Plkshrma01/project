@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>AutoSetu — Your ride, your route</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="AutoSetu home"><span class="brand-mark">🚕</span><span>AUTO<span>SETU</span><small>Your ride. Your route. Your city.</small></span></a>
+    <div id="header-actions" class="header-actions"><span class="muted">Move smarter, together.</span></div>
+  </header>
+
+  <main>
+    <section id="auth-view" class="auth-layout">
+      <div class="hero-panel">
+        <div class="eyebrow">LOCAL RIDES · CARPOOL · COMMUNITY</div>
+        <h1>Every journey<br><em>starts here.</em></h1>
+        <p>Find a local auto, connect with drivers, and share journeys with AutoSetu.</p>
+        <div class="hero-stats"><div><strong>Easy</strong><span>to get started</span></div><div><strong>Local</strong><span>mobility first</span></div><div><strong>Connected</strong><span>by community</span></div></div>
+        <div class="hero-art" aria-hidden="true"><span class="sun"></span><span class="road"></span><span class="auto-art">🛺</span><span class="pin pin-one">●</span><span class="pin pin-two">●</span></div>
+      </div>
+      <div class="auth-card">
+        <div class="auth-tabs"><button class="tab active" id="show-login" type="button">Log in</button><button class="tab" id="show-signup" type="button">Create account</button></div>
+        <div id="auth-message" class="notice hidden" role="status"></div>
+        <form id="login-form" class="auth-form">
+          <h2>Welcome back</h2><p class="muted">Log in to continue to AutoSetu.</p>
+          <label>Email address<input id="login-email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+          <label>Password<input id="login-password" type="password" autocomplete="current-password" required minlength="6" placeholder="Your password"></label>
+          <button class="btn primary full" type="submit">Log in <span>→</span></button>
+          <button class="text-button" id="forgot-password" type="button">Forgot password?</button>
+        </form>
+        <form id="signup-form" class="auth-form hidden">
+          <h2>Create your account</h2><p class="muted">First, tell us how you’ll use AutoSetu.</p>
+          <label>Full name<input id="signup-name" type="text" autocomplete="name" required minlength="2" placeholder="Your full name"></label>
+          <label>Email address<input id="signup-email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+          <label>Password<input id="signup-password" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters"></label>
+          <label>I want to join as
+            <select id="signup-role" required><option value="passenger">Passenger — find rides</option><option value="driver">Driver — offer rides</option></select>
+          </label>
+          <button class="btn primary full" type="submit">Create account <span>→</span></button>
+          <p class="fine-print">By creating an account, you agree to use the service responsibly. Demo verification status is not a legal or safety certification.</p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard-view" class="dashboard hidden">
+      <div class="welcome-row"><div><div class="eyebrow" id="role-eyebrow">YOUR AUTOsETU</div><h1 id="welcome-title">Your dashboard</h1><p class="muted" id="welcome-subtitle"></p></div><button class="btn outline" id="logout-button" type="button">Log out</button></div>
+      <div id="passenger-panel" class="role-panel hidden">
+        <div class="dashboard-grid">
+          <section class="panel ride-panel">
+            <div class="panel-heading"><div><span class="icon-tile">📍</span><h2>Plan a local ride</h2></div><span class="pill">Passenger</span></div>
+            <form id="ride-form" class="stack">
+              <label>Pickup location<input id="pickup-input" required placeholder="e.g. Railway Station"></label>
+              <label>Destination<input id="destination-input" required placeholder="Where are you going?"></label>
+              <div class="two-col"><label>Ride type<select id="ride-type"><option value="auto">Auto</option><option value="taxi">Taxi</option></select></label><label>Offer / agreed fare (₹)<input id="ride-fare" type="number" min="0" step="1" placeholder="Discuss with driver"></label></div>
+              <button class="btn primary full" type="submit">Request a ride <span>→</span></button>
+            </form>
+            <p class="fine-print">This creates a ride request in the database. A driver must accept it; this starter does not dispatch a real-world vehicle automatically.</p>
+          </section>
+          <section class="panel map-panel"><div class="panel-heading"><div><span class="icon-tile">🗺️</span><h2>Explore your area</h2></div><button id="locate-button" class="small-button" type="button">Use my location</button></div><div id="map" aria-label="Map"></div><p id="location-status" class="fine-print">Allow location access to center the map. Map tiles require internet.</p></section>
+        </div>
+        <section class="panel"><div class="panel-heading"><div><span class="icon-tile">🛺</span><h2>Your ride requests</h2></div><button id="refresh-rides" class="small-button" type="button">Refresh</button></div><div id="passenger-rides" class="empty-state">Loading rides…</div></section>
+        <section class="panel"><div class="panel-heading"><div><span class="icon-tile">🚗</span><h2>Find a carpool</h2></div></div><form id="carpool-search" class="inline-form"><input id="carpool-search-from" placeholder="From"><input id="carpool-search-to" placeholder="To"><button class="btn secondary" type="submit">Search carpools</button></form><div id="carpool-results" class="empty-state">Search published carpool trips.</div></section>
+      </div>
+      <div id="driver-panel" class="role-panel hidden">
+        <div class="driver-hero"><div><span class="pill light">Driver workspace</span><h2>Ready to hit the road?</h2><p>Go online when you’re available to receive ride requests.</p></div><button id="online-toggle" class="btn online-btn" type="button">GO ONLINE</button></div>
+        <div class="dashboard-grid">
+          <section class="panel"><div class="panel-heading"><div><span class="icon-tile">🔔</span><h2>Ride requests</h2></div><button id="refresh-driver-rides" class="small-button" type="button">Refresh</button></div><div id="driver-rides" class="empty-state">Loading requests…</div></section>
+          <section class="panel"><div class="panel-heading"><div><span class="icon-tile">🗺️</span><h2>Driver map</h2></div><button id="driver-locate-button" class="small-button" type="button">Use my location</button></div><div id="driver-map" class="driver-map" aria-label="Driver map"></div><p id="driver-location-status" class="fine-print">Location is only shared when you choose to use this feature.</p></section>
+        </div>
+        <section class="panel"><div class="panel-heading"><div><span class="icon-tile">🚘</span><h2>Publish a carpool</h2></div></div><form id="carpool-form" class="stack">
+          <div class="two-col"><label>Starting location<input id="carpool-from" required placeholder="From"></label><label>Destination<input id="carpool-to" required placeholder="To"></label></div>
+          <div class="three-col"><label>Date<input id="carpool-date" type="date" required></label><label>Departure time<input id="carpool-time" type="time" required></label><label>Available seats<input id="carpool-seats" type="number" min="1" max="8" value="3" required></label></div>
+          <div class="two-col"><label>Vehicle details<input id="carpool-vehicle" placeholder="e.g. hatchback"></label><label>Cost contribution (₹)<input id="carpool-cost" type="number" min="0" step="1" placeholder="Shared trip cost"></label></div>
+          <button class="btn primary" type="submit">Publish carpool</button>
+          <p class="fine-print">Carpooling is for sharing costs on an already-planned journey, subject to local transport and insurance rules.</p>
+        </form></section>
+        <section class="panel"><div class="panel-heading"><div><span class="icon-tile">📋</span><h2>Your carpools</h2></div><button id="refresh-carpools" class="small-button" type="button">Refresh</button></div><div id="driver-carpools" class="empty-state">Loading carpools…</div></section>
+      </div>
+      <footer class="dashboard-footer">AutoSetu MVP · Keep your journey safe · <span id="current-user-email"></span></footer>
+    </section>
+  </main>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
